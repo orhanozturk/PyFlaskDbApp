@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quiz</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; color: #333; margin: 0; padding: 0; }
+        .container { max-width: 800px; margin: 20px auto; padding: 20px; background: white; box-shadow: 0px 2px 10px rgba(0,0,0,0.1); }
+        h1, h2 { color: #007BFF; }
+        .submit-btn { background: #007BFF; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+        .best-score { position: absolute; top: 10px; right: 20px; font-size: 16px; font-weight: bold; color: #007BFF; }
+        footer { margin-top: 20px; font-size: 0.9rem; text-align: center; color: #777; }
+    </style>
+</head>
+<body>
+    <div class="best-score" id="bestScore">
+        Best Score: %0
+    </div>
+    <div class="container">
+        <h1>AI Development Quiz</h1>
+        <form id="quizForm">
+            <h2>Your Username:</h2>
+            <input type="text" name="username" placeholder="Enter your username" required>
+            <br><br>
+
+            <h2>Question 1: Which Python library is used for deep learning?</h2>
+            <input type="radio" name="question1" value="TensorFlow" required> TensorFlow<br>
+            <input type="radio" name="question1" value="NumPy"> NumPy<br>
+            <input type="radio" name="question1" value="Pandas"> Pandas<br>
+            <input type="radio" name="question1" value="Matplotlib"> Matplotlib<br>
+
+            <h2>Question 2: Select the correct statement:</h2>
+            <input type="radio" name="question2" value="1" required> Deep learning is a subset of machine learning.<br>
+            <input type="radio" name="question2" value="2"> Machine learning is a subset of deep learning.<br>
+            <input type="radio" name="question2" value="3"> AI is a subset of deep learning.<br>
+            <input type="radio" name="question2" value="4"> Python is only used for data analytics.<br>
+
+            <h2>Question 3: Which library can be used directly to create a neural network model in Python?</h2>
+            <input type="radio" name="question3" value="Scikit-learn" required> Scikit-learn<br>
+            <input type="radio" name="question3" value="Flask"> Flask<br>
+            <input type="radio" name="question3" value="PyTorch"> PyTorch<br>
+            <input type="radio" name="question3" value="Django"> Django<br>
+
+            <h2>Question 4: Which of the following algorithms is a supervised learning algorithm?</h2>
+            <input type="radio" name="question4" value="K-means" required> K-means<br>
+            <input type="radio" name="question4" value="SVM"> Support Vector Machines (SVM)<br>
+            <input type="radio" name="question4" value="DBSCAN"> DBSCAN<br>
+            <input type="radio" name="question4" value="PCA"> Principal Component Analysis (PCA)<br>
+
+            <br><br>
+            <button type="submit" class="submit-btn">Submit Answers</button>
+        </form>
+    </div>
+    <footer>
+        Developed by Orhan OZTURK
+    </footer>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Fetch best score from server
+            fetch('/get_best_score')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("bestScore").textContent = `Best Score: %${data.best_score}`;
+                })
+                .catch(() => {
+                    document.getElementById("bestScore").textContent = "Best Score: %0";
+                });
+        });
+
+        const form = document.getElementById('quizForm');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(form);
+
+            fetch('/submit', { method: 'POST', body: formData })
+                .then(response => response.json())
+                .then(data => {
+                    localStorage.setItem("questions", JSON.stringify(data.questions));
+                    const url = `/result?score=${data.score}&highest_score=${data.highest_score}`;
+                    window.location.href = url;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred.');
+                });
+        });
+    </script>
+</body>
+</html>

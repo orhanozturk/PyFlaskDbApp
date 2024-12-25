@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quiz Results</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; text-align: center; padding-top: 50px; }
+        .container { display: inline-block; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); width: 80%; margin: auto; }
+        h1 { color: #007BFF; }
+        .score { font-size: 1.5rem; margin: 10px 0; }
+        .question { text-align: left; margin: 20px 0; }
+        .correct { color: green; }
+        .incorrect { color: red; }
+        .back-button { background: #007BFF; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; display: inline-block; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Quiz Results</h1>
+        <p class="score">Your Score: <span id="score">0</span></p>
+        <p class="score">Highest Score: <span id="highestScore">0</span></p>
+        <div id="questions"></div>
+        <a href="/" class="back-button">Back to Quiz</a>
+    </div>
+    <footer>
+        Developed by Orhan OZTURK
+    </footer>    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const params = new URLSearchParams(window.location.search);
+            document.getElementById("score").textContent = params.get("score") || 0;
+            document.getElementById("highestScore").textContent = params.get("highest_score") || 0;
+
+            // Fetch question results from localStorage
+            const questionData = JSON.parse(localStorage.getItem("questions")) || [];
+            const questionsDiv = document.getElementById("questions");
+
+            questionData.forEach((q, index) => {
+                const questionDiv = document.createElement("div");
+                questionDiv.className = "question";
+                questionDiv.innerHTML = `
+                    <p><strong>Q${index + 1}: ${q.question}</strong></p>
+                    <p>Your Answer: <span class="${q.is_correct ? 'correct' : 'incorrect'}">${q.user_answer}</span></p>
+                    <p>Correct Answer: <span class="correct">${q.correct_answer}</span></p>
+                `;
+                questionsDiv.appendChild(questionDiv);
+            });
+        });
+    </script>
+</body>
+</html>
